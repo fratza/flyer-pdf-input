@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [storeBranches, setStoreBranches] = useState<any[]>([]);
   const [formData, setFormData] = useState({
@@ -76,13 +77,10 @@ const Index = () => {
 
     try {
       const webhookUrl = "http://192.168.1.35:5678/webhook/form-input";
-      const response = await fetch(
-        webhookUrl,
-        {
-          method: "POST",
-          body: data,
-        },
-      );
+      const response = await fetch(webhookUrl, {
+        method: "POST",
+        body: data,
+      });
 
       if (!response.ok) {
         throw new Error("Failed to submit form");
@@ -92,6 +90,16 @@ const Index = () => {
         title: "Form Submitted",
         description: "Your store information has been received.",
       });
+
+      setFormData({
+        storeCode: "",
+        storeName: "",
+        url: "",
+        file: null,
+      });
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
       toast({
@@ -225,6 +233,7 @@ const Index = () => {
               </Label>
               <div className="relative">
                 <Input
+                  ref={fileInputRef}
                   id="file"
                   type="file"
                   onChange={handleFileChange}
