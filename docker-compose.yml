@@ -1,9 +1,14 @@
-version: '3.8'
-
 services:
   app:
-    build: .
+    build:
+      context: .
+      args:
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+        VITE_WEBHOOK_URL: ${VITE_WEBHOOK_URL}
     ports:
       - "8080:80"
     restart: unless-stopped
     container_name: store-form
+    env_file:
+      - .env

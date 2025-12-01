@@ -75,8 +75,9 @@ const Index = () => {
     }
 
     try {
+      const webhookUrl = "http://192.168.1.35:5678/webhook/form-input";
       const response = await fetch(
-        "http:/localhost:5678/webhook-test/form-input",
+        webhookUrl,
         {
           method: "POST",
           body: data,
