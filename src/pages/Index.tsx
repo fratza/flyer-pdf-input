@@ -57,6 +57,15 @@ const Index = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!formData.storeCode) {
+      toast({
+        variant: "destructive",
+        title: "Validation Error",
+        description: "Please select a store code.",
+      });
+      return;
+    }
+
     if (!formData.url && formData.files.length === 0) {
       toast({
         variant: "destructive",
@@ -135,7 +144,7 @@ const Index = () => {
                 htmlFor="storeCode"
                 className="text-foreground font-medium"
               >
-                Store Code
+                Store Code <span className="text-destructive">*</span>
               </Label>
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
