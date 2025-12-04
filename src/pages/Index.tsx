@@ -76,7 +76,7 @@ const Index = () => {
     });
 
     try {
-      const webhookUrl = "http://192.168.1.35:5678/webhook/form-input";
+      const webhookUrl = import.meta.env.VITE_WEBHOOK_URL || "http://localhost:5678/webhook/form-input";
       const response = await fetch(webhookUrl, {
         method: "POST",
         body: data,
