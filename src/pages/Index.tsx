@@ -30,7 +30,7 @@ const Index = () => {
     storeCode: "",
     storeName: "",
     url: "",
-    file: null as File | null,
+    files: [] as File[],
   });
 
   useEffect(() => {
@@ -57,11 +57,11 @@ const Index = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.url && !formData.file) {
+    if (!formData.url && formData.files.length === 0) {
       toast({
         variant: "destructive",
         title: "Validation Error",
-        description: "Please provide either a URL or attach a file.",
+        description: "Please provide either a URL or attach files.",
       });
       return;
     }
@@ -71,9 +71,9 @@ const Index = () => {
     data.append("storeName", formData.storeName);
     data.append("url", formData.url);
     data.append("submittedAt", new Date().toISOString());
-    if (formData.file) {
-      data.append("file", formData.file);
-    }
+    formData.files.forEach((file) => {
+      data.append("files", file);
+    });
 
     try {
       const webhookUrl = "http://192.168.1.35:5678/webhook/form-input";
@@ -95,7 +95,7 @@ const Index = () => {
         storeCode: "",
         storeName: "",
         url: "",
-        file: null,
+        files: [],
       });
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -111,8 +111,8 @@ const Index = () => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFormData({ ...formData, file: e.target.files[0] });
+    if (e.target.files) {
+      setFormData({ ...formData, files: Array.from(e.target.files) });
     }
   };
 
@@ -236,6 +236,7 @@ const Index = () => {
                   ref={fileInputRef}
                   id="file"
                   type="file"
+                  multiple
                   onChange={handleFileChange}
                   className="hidden"
                 />
@@ -245,9 +246,9 @@ const Index = () => {
                 >
                   <Upload className="w-5 h-5 text-muted-foreground" />
                   <span className="text-muted-foreground">
-                    {formData.file
-                      ? formData.file.name
-                      : "Click to upload file"}
+                    {formData.files.length > 0
+                      ? `${formData.files.length} file(s) selected`
+                      : "Click to upload files"}
                   </span>
                 </label>
               </div>
