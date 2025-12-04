@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown, Upload } from "lucide-react";
+import { Check, ChevronsUpDown, Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
@@ -76,7 +76,9 @@ const Index = () => {
     });
 
     try {
-      const webhookUrl = import.meta.env.VITE_WEBHOOK_URL || "http://localhost:5678/webhook/form-input";
+      const webhookUrl =
+        import.meta.env.VITE_WEBHOOK_URL ||
+        "http://localhost:5678/webhook/form-input";
       const response = await fetch(webhookUrl, {
         method: "POST",
         body: data,
@@ -114,6 +116,13 @@ const Index = () => {
     if (e.target.files) {
       setFormData({ ...formData, files: Array.from(e.target.files) });
     }
+  };
+
+  const handleRemoveFile = (indexToRemove: number) => {
+    setFormData({
+      ...formData,
+      files: formData.files.filter((_, index) => index !== indexToRemove),
+    });
   };
 
   return (
@@ -252,6 +261,41 @@ const Index = () => {
                   </span>
                 </label>
               </div>
+
+              {formData.files.length > 0 && (
+                <div className="space-y-2 mt-4 animate-in fade-in slide-in-from-top-2">
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    Selected Files
+                  </Label>
+                  <div className="grid gap-2">
+                    {formData.files.map((file, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border border-border group hover:border-primary/50 transition-colors"
+                      >
+                        <div className="flex items-center gap-2 overflow-hidden">
+                          <span className="text-sm font-medium truncate">
+                            {file.name}
+                          </span>
+                          <span className="text-xs text-muted-foreground shrink-0">
+                            ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                          </span>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleRemoveFile(index)}
+                          className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                        >
+                          <X className="h-4 w-4" />
+                          <span className="sr-only">Remove file</span>
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             <Button
