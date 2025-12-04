@@ -21,11 +21,16 @@ import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown, Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+interface StoreBranch {
+  store_code: string;
+  store_name: string;
+}
+
 const Index = () => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
-  const [storeBranches, setStoreBranches] = useState<any[]>([]);
+  const [storeBranches, setStoreBranches] = useState<StoreBranch[]>([]);
   const [formData, setFormData] = useState({
     storeCode: "",
     storeName: "",
